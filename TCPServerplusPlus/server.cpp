@@ -8,11 +8,12 @@ using std::endl;
 
 #define SERVER_PORT 54000
 #define MSG_BUF_SIZE 4096
-
+//typedef void* HANDLE;
 Server::Server()
 {
     cout << "Initializing server...\n";
     //
+    h_thread = 0;
     winsock_ver = MAKEWORD(2, 2);
     addr_len = sizeof(SOCKADDR_IN);
     addr_svr.sin_family = AF_INET;
@@ -74,8 +75,11 @@ DWORD WINAPI CreateClientThread(LPVOID lpParameter);
 //
 void Server::WaitForClient()
 {
+ 
     while (true)
     {
+        
+        
         sock_clt = ::accept(sock_svr, (SOCKADDR*)&addr_clt, &addr_len);
         if (sock_clt == INVALID_SOCKET)
         {
@@ -84,8 +88,9 @@ void Server::WaitForClient()
             //system("pause");
             exit(1);
         }
-        InetNtop(addr_clt.sin_family, &addr_clt, (PWSTR)buf_ip, IP_BUF_SIZE);
+        InetNtop(addr_clt.sin_family, &addr_clt.sin_addr, (PWSTR)buf_ip, strlen(buf_ip));
         cout << "A new client connected...IP address: " << buf_ip << ", port number: " << ::ntohs(addr_clt.sin_port) << endl;
+        
         h_thread = CreateThread(nullptr, 0, CreateClientThread, (LPVOID)sock_clt, 0, nullptr);
         if (h_thread == NULL)
         {
@@ -94,7 +99,8 @@ void Server::WaitForClient()
             //system("pause");
             exit(1);
         }
-        CloseHandle(h_thread);
+        else 
+            CloseHandle(&h_thread);
     }
 }
 
