@@ -106,7 +106,6 @@ DWORD WINAPI CreateClientThread(LPVOID lpParameter)
     int snd_result = 0;
     do
     {
-
         memset(buf_msg, 0, MSG_BUF_SIZE);
         ret_val = ::recv(sock_clt, buf_msg, MSG_BUF_SIZE, 0);
         
